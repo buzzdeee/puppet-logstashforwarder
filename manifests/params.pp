@@ -62,7 +62,7 @@ class logstashforwarder::params {
       $logstashforwarder_user  = 'root'
       $logstashforwarder_group = 'root'
     }
-    'Darwin': {
+    'Darwin', 'OpenBSD': {
       $logstashforwarder_user  = 'root'
       $logstashforwarder_group = 'wheel'
     }
@@ -79,6 +79,9 @@ class logstashforwarder::params {
     }
     'Darwin': {
       $download_tool = 'curl -o'
+    }
+    'OpenBSD': {
+      $download_tool = 'ftp -o'
     }
     default: {
       fail("\"${module_name}\" provides no download tool default value
@@ -98,6 +101,11 @@ class logstashforwarder::params {
       $package_dir = '/Library/Logstashforwarder/swdl'
       $installpath = '/Library/Logstashforwarder'
     }
+    'OpenBSD': {
+      $configdir = '/etc/logstash-forwarder'
+      $package_dir = undef
+      $installpath = undef
+    }
     default: {
       fail("\"${module_name}\" provides no config directory default value
            for \"${::kernel}\"")
@@ -110,7 +118,7 @@ class logstashforwarder::params {
       # main application
       $package = [ 'logstash-forwarder' ]
     }
-    'Debian', 'Ubuntu': {
+    'Debian', 'Ubuntu', 'OpenBSD': {
       # main application
       $package = [ 'logstash-forwarder' ]
     }
@@ -137,6 +145,14 @@ class logstashforwarder::params {
       $service_pattern    = $service_name
       $service_providers  = [ 'init' ]
       $defaults_location  = '/etc/default'
+    }
+    'OpenBSD': {
+      $service_name       = 'logstash_forwarder'
+      $service_hasrestart = true
+      $service_hasstatus  = true
+      $service_pattern    = undef
+      $service_providers  = [ 'openbsd' ]
+      $defaults_location  = undef
     }
     'Darwin': {
       $service_name       = 'net.logstash.forwarder'

@@ -93,6 +93,9 @@
 # [*service_provider*]
 #   Service provider to use. By Default when a single service provider is possibe that one is selected.
 #
+# [*service_flags*]
+#   Service flags, used for the OpenBSD service, defaults to undef.
+#
 # [*init_defaults*]
 #   Defaults file content in hash representation
 #
@@ -173,6 +176,7 @@ class logstashforwarder(
   $configdir               = $logstashforwarder::params::configdir,
   $purge_configdir         = $logstashforwarder::params::purge_configdir,
   $service_provider        = 'init',
+  $service_flags           = undef,
   $init_defaults           = $logstashforwarder::params::init_defaults,
   $init_defaults_file      = undef,
   $init_template           = undef,
@@ -200,7 +204,9 @@ class logstashforwarder(
   class { 'logstashforwarder::config': }
 
   # service(s)
-  class { 'logstashforwarder::service': }
+  class { 'logstashforwarder::service':
+    service_flags => $service_flags,
+  }
 
   if ($manage_repo == true) {
     # Set up repositories

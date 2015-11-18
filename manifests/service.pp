@@ -10,8 +10,8 @@
 #
 # === Parameters
 #
-# This class does not provide any parameters.
-#
+# ==== service_flags
+# Flags to be passed to the service, used on OpenBSD only, defaults to undef.
 #
 # === Examples
 #
@@ -26,14 +26,20 @@
 #
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-class logstashforwarder::service {
+class logstashforwarder::service (
+  $service_flags = undef,
+){
 
   case $logstashforwarder::service_provider {
 
-    init: {
-      logstashforwarder::service::init { $logstashforwarder::params::service_name:; }
+    'init': {
+      logstashforwarder::service::init { $logstashforwarder::params::service_name: }
     }
-
+    'openbsd': {
+      logstashforwarder::service::openbsd { $logstashforwarder::params::service_name:
+        service_flags => $service_flags,
+      }
+    }
     default: {
       fail("Unknown service provider ${logstashforwarder::service_provider}")
     }
